@@ -3,7 +3,7 @@ using System.Text;
 
 namespace NServiceBus.Persistence.Sqlite.SagaPersister;
 
-internal class SagaUniqueIdentity
+internal static class SagaUniqueIdentity
 {
 	public static string FormatId(Type sagaType, string propertyName, object propertyValue)
 	{
