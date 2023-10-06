@@ -136,7 +136,7 @@ internal class SqliteSagaPersisterTests : SqlitePersistenceTestBase
 
 		protected override void ConfigureHowToFindSaga(SagaPropertyMapper<SagaData> mapper)
 		{
-			mapper.ConfigureMapping<StartMessage>(m => m.SomeId).ToSaga(s => s.SomeId);
+			mapper.MapSaga(saga => saga.SomeId).ToMessage<StartMessage>(m => m.SomeId);
 		}
 	}
 
