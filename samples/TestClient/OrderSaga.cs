@@ -7,7 +7,7 @@ public class OrderSaga : Saga<OrderSagaData>,
 	IHandleMessages<CompleteOrder>,
 	IHandleTimeouts<CancelOrder>
 {
-	readonly static ILog log = LogManager.GetLogger<OrderSaga>();
+	readonly static ILog s_log = LogManager.GetLogger<OrderSaga>();
 
 	protected override void ConfigureHowToFindSaga(SagaPropertyMapper<OrderSagaData> mapper)
 	{
@@ -19,11 +19,9 @@ public class OrderSaga : Saga<OrderSagaData>,
 	public async Task Handle(StartOrder message, IMessageHandlerContext context)
 	{
 		// Correlation property Data.OrderId is automatically assigned with the value from message.OrderId;
-		log.Info($"StartOrder received with OrderId {message.OrderId}");
+		s_log.Info($"StartOrder received with OrderId {message.OrderId}");
 
-		log.Info($@"Sending a CompleteOrder that will be delayed by 10 seconds
-Stop the endpoint now to see the saga data in:
-{LearningLocationHelper.GetSagaLocation<OrderSaga>(Data.Id)}");
+		s_log.Info($@"Sending a CompleteOrder that will be delayed by 10 seconds Stop the endpoint now to see the saga data in:{LearningLocationHelper.GetSagaLocation<OrderSaga>(Data.Id)}");
 		var completeOrder = new CompleteOrder
 		{
 			OrderId = Data.OrderId
@@ -35,23 +33,21 @@ Stop the endpoint now to see the saga data in:
 			.ConfigureAwait(false);
 
 		var timeout = DateTime.UtcNow.AddSeconds(30);
-		log.Info($@"Requesting a CancelOrder that will be executed in 30 seconds.
-Stop the endpoint now to see the timeout data in the delayed directory
-{LearningLocationHelper.TransportDelayedDirectory(timeout)}");
+		s_log.Info($@"Requesting a CancelOrder that will be executed in 30 seconds. Stop the endpoint now to see the timeout data in the delayed directory {LearningLocationHelper.TransportDelayedDirectory(timeout)}");
 		await RequestTimeout<CancelOrder>(context, timeout)
 			.ConfigureAwait(false);
 	}
 
 	public Task Handle(CompleteOrder message, IMessageHandlerContext context)
 	{
-		log.Info($"CompleteOrder received with OrderId {message.OrderId}");
+		s_log.Info($"CompleteOrder received with OrderId {message.OrderId}");
 		MarkAsComplete();
 		return Task.CompletedTask;
 	}
 
 	public Task Timeout(CancelOrder state, IMessageHandlerContext context)
 	{
-		log.Info($"CompleteOrder not received soon enough OrderId {Data.OrderId}. Calling MarkAsComplete");
+		s_log.Info($"CompleteOrder not received soon enough OrderId {Data.OrderId}. Calling MarkAsComplete");
 		MarkAsComplete();
 		return Task.CompletedTask;
 	}
