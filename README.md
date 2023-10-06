@@ -1,6 +1,6 @@
 # NServiceBus.Persistence.Sqlite
 
-![Build](https://github.com/CHG-MERIDIAN/NServiceBus.Persistence.Sqlite/workflows/Build%20(and%20release)/badge.svg?branch=main)
+![Build](https://github.com/CHG-MERIDIAN/NServiceBus.Persistence.Sqlite/actions/workflows/build.yml/badge.svg?branch=main)
 [![NuGet Version](http://img.shields.io/nuget/v/CHG.NServiceBus.Persistence.Sqlite.svg?style=flat)](https://www.nuget.org/packages/CHG.NServiceBus.Persistence.Sqlite/) [![License](https://img.shields.io/badge/license-APACHE-blue.svg)](LICENSE)
 
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=CHG-MERIDIAN_NServiceBus.Persistence.Sqlite&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=CHG-MERIDIAN_NServiceBus.Persistence.Sqlite)
