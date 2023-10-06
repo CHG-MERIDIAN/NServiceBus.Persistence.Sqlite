@@ -28,7 +28,7 @@ var testResultsPath = MakeAbsolute(outputDirTests).CombineWithFilePath("*.trx");
 var nugetPublishFeed = "https://api.nuget.org/v3/index.json";
 
 var isLocalBuild = BuildSystem.IsLocalBuild;
-var isMasterBranch = StringComparer.OrdinalIgnoreCase.Equals("refs/heads/master", BuildSystem.GitHubActions.Environment.Workflow.Ref);
+var isMasterBranch = StringComparer.OrdinalIgnoreCase.Equals("refs/heads/main", BuildSystem.GitHubActions.Environment.Workflow.Ref);
 var isPullRequest = BuildSystem.GitHubActions.Environment.PullRequest.IsPullRequest;
 var runSonar = !string.IsNullOrWhiteSpace(sonarLogin);
 

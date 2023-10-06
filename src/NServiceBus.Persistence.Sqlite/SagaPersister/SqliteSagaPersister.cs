@@ -5,6 +5,7 @@ using NServiceBus.Persistence.Sqlite.SagaPersister;
 using NServiceBus.Sagas;
 
 namespace NServiceBus.Persistence.Sqlite;
+
 internal class SqliteSagaPersister : ISagaPersister
 {
 	private const string SAVE_COMMAND = "INSERT INTO SagaData(Id, Data, Metadata, PersistenceVersion, SagaTypeVersion, CorrelationId) VALUES (@Id, @Data, @Metadata, @PersistenceVersion, @SagaTypeVersion, @CorrelationId)";

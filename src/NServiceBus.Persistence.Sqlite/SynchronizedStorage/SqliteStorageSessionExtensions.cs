@@ -1,4 +1,5 @@
-﻿using NServiceBus.Persistence;
+﻿using System.Data.Common;
+using NServiceBus.Persistence;
 using NServiceBus.Persistence.Sqlite;
 using NServiceBus.Testing;
 
@@ -19,4 +20,30 @@ public static class SqliteStorageSessionExtensions
 		TestableSqliteStorageSession testableStorageSession => testableStorageSession.Session,
 		_ => throw new InvalidOperationException("It was not possible to retrieve a Sqlite storage session.")
 	};
+
+	/// <summary>
+	/// Creates the required database schema
+	/// </summary>
+	/// <param name="connection"></param>
+	/// <param name="cancellationToken"></param>
+	/// <returns></returns>
+	internal static async Task CreateSchema(this DbConnection connection, CancellationToken cancellationToken)
+	{
+		var command = connection.CreateCommand();
+
+		command.CommandText =
+		"""
+			CREATE TABLE IF NOT EXISTS SagaData(
+				Id string NOT NULL,
+				Data string NOT NULL,
+				Metadata string NOT NULL,
+				PersistenceVersion string NOT NULL,
+				SagaTypeVersion string NOT NULL,
+				CorrelationId string NOT NULL,
+				Concurrency int DEFAULT 1,
+				PRIMARY KEY (id)
+			);
+			""";
+		await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+	}
 }
