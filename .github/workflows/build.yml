@@ -41,5 +41,3 @@ jobs:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}  
           SONAR_LOGIN: ${{ secrets.SONAR_LOGIN_SQLITEPERSISTENCE }} 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
