@@ -12,8 +12,8 @@ internal class SqliteSagaPersister : ISagaPersister
 	private const string GET_COMMAND = "SELECT Id, Metadata, Data, PersistenceVersion, SagaTypeVersion, CorrelationId, Concurrency FROM SagaData WHERE Id=@Id";
 	private const string GET_BY_PROPERTY_COMMAND = "SELECT Id, Metadata, Data, PersistenceVersion, SagaTypeVersion, CorrelationId, Concurrency FROM SagaData WHERE CorrelationId=@LookupId";
 	private const string UPDATE_COMMAND = "UPDATE SagaData SET Data= @Data, PersistenceVersion=@PersistenceVersion, SagaTypeVersion=@SagaTypeVersion,  Concurrency = @Concurrency + 1 WHERE Id=@Id and Concurrency=@Concurrency";
-	private const string SagaContainerContextKeyPrefix = "SagaDataContainer:";
-	private const string SagaConcurrencyContextKeyPrefix = $"{SagaContainerContextKeyPrefix}Concurrency:";
+	private const string SAGA_CONTAINER_CONTEXT_KEY_PREFIX = "SagaDataContainer:";
+	private const string SAGA_CONCURRENCY_CONTEXT_KEY_PREFIX = $"{SAGA_CONTAINER_CONTEXT_KEY_PREFIX}Concurrency:";
 
 	public async Task Complete(IContainSagaData sagaData, ISynchronizedStorageSession session, ContextBag context, CancellationToken cancellationToken = default)
 	{
@@ -22,7 +22,7 @@ internal class SqliteSagaPersister : ISagaPersister
 		if (sqliteSession?.Connection == null)
 			return;
 
-		var concurrency = context.Get<int>($"{SagaConcurrencyContextKeyPrefix}{sagaData.Id}");
+		var concurrency = context.Get<int>($"{SAGA_CONCURRENCY_CONTEXT_KEY_PREFIX}{sagaData.Id}");
 
 		using var command = sqliteSession.Connection.CreateCommand();
 		command.Transaction = sqliteSession.Transaction;
@@ -83,7 +83,7 @@ internal class SqliteSagaPersister : ISagaPersister
 		if (sqliteSession?.Connection == null)
 			return;
 
-		var concurrency = context.Get<int>($"{SagaConcurrencyContextKeyPrefix}{sagaData.Id}");
+		var concurrency = context.Get<int>($"{SAGA_CONCURRENCY_CONTEXT_KEY_PREFIX}{sagaData.Id}");
 
 		var sagaDataType = sagaData.GetType();
 
@@ -148,7 +148,7 @@ internal class SqliteSagaPersister : ISagaPersister
 		sagaData.Originator = originator;
 		sagaData.OriginalMessageId = originalMessageId;
 
-		context.Set($"{SagaConcurrencyContextKeyPrefix}{sagaData.Id}", dataReader.GetInt32(6));
+		context.Set($"{SAGA_CONCURRENCY_CONTEXT_KEY_PREFIX}{sagaData.Id}", dataReader.GetInt32(6));
 
 		return sagaData;
 	}

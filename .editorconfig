@@ -132,11 +132,11 @@ csharp_preserve_single_line_statements = false
 ################################################################
 
 # constant_fields - Define constant fields
-dotnet_naming_symbols.constant_fields.applicable_kinds = field
+dotnet_naming_symbols.constant_fields.applicable_kinds = field, local
 dotnet_naming_symbols.constant_fields.required_modifiers = const
 
 # private and protected constant fields
-dotnet_naming_symbols.private_and_protected_constant_fields.applicable_kinds = fields
+dotnet_naming_symbols.private_and_protected_constant_fields.applicable_kinds = field
 dotnet_naming_symbols.private_and_protected_constant_fields.applicable_accessibilities = private, protected
 dotnet_naming_symbols.private_and_protected_constant_fields.required_modifiers = const
 
@@ -145,9 +145,15 @@ dotnet_naming_symbols.non_private_readonly_fields.applicable_accessibilities = p
 dotnet_naming_symbols.non_private_readonly_fields.applicable_kinds = field
 dotnet_naming_symbols.non_private_readonly_fields.required_modifiers = readonly
 
-# static_readonly_fields - Define static and readonly fields
-dotnet_naming_symbols.static_readonly_fields.applicable_kinds = field
-dotnet_naming_symbols.static_readonly_fields.required_modifiers = static, readonly
+# static_non_public_fields - Define static non-public fields
+dotnet_naming_symbols.static_non_public_fields.applicable_accessibilities = private, protected, protected_internal, protected_friend
+dotnet_naming_symbols.static_non_public_fields.applicable_kinds = field
+dotnet_naming_symbols.static_non_public_fields.required_modifiers = static
+
+# static_public_fields - Define static non-public fields
+dotnet_naming_symbols.static_public_fields.applicable_accessibilities = public, internal, friend
+dotnet_naming_symbols.static_public_fields.applicable_kinds = field
+dotnet_naming_symbols.static_public_fields.required_modifiers = static
 
 # class_interface_symbols - Define any symbol that is part of a class' interface
 dotnet_naming_symbols.class_interface_symbols.applicable_kinds = method, property, event, delegate
@@ -167,6 +173,9 @@ dotnet_naming_symbols.non_public_member_variables.applicable_accessibilities = i
 
 # namespaces
 dotnet_naming_symbols.namespaces.applicable_kinds = namespace
+
+# parameter and local variables
+dotnet_naming_symbols.locals_and_parameters.applicable_kinds = parameter, local
 
 ################################################################
 # Naming Styles
@@ -193,10 +202,23 @@ dotnet_naming_style.upper_constants.word_separator = _
 dotnet_naming_style.underscore_prefix.required_prefix = _
 dotnet_naming_style.underscore_prefix.capitalization = camel_case
 
+# s_underscore_prefix
+dotnet_naming_style.s_underscore_prefix.required_prefix = s_
+dotnet_naming_style.s_underscore_prefix.capitalization = camel_case
+
 ################################################################
 # Naming Rules
 ################################################################
-# missing rule: local_variables_must_be_camel_case https://github.com/dotnet/roslyn/issues/18121
+
+# local_variables_must_be_camel_case
+dotnet_naming_rule.locals_should_be_camel_case.severity = suggestion
+dotnet_naming_rule.locals_should_be_camel_case.symbols = locals_and_parameters
+dotnet_naming_rule.locals_should_be_camel_case.style = camel_case
+
+# Constant fields must be Upper Case
+dotnet_naming_rule.constant_fields_must_be_upper_case.severity = warning
+dotnet_naming_rule.constant_fields_must_be_upper_case.symbols = constant_fields
+dotnet_naming_rule.constant_fields_must_be_upper_case.style = upper_constants
 
 # private constant fields must be upper_case
 dotnet_naming_rule.private_and_protected_constant_fields_must_be_upper_case.severity = warning
@@ -208,27 +230,25 @@ dotnet_naming_rule.non_public_member_variables_must_be_prefixed_with_underscore.
 dotnet_naming_rule.non_public_member_variables_must_be_prefixed_with_underscore.symbols = non_public_member_variables
 dotnet_naming_rule.non_public_member_variables_must_be_prefixed_with_underscore.style = underscore_prefix
 
-# Static readonly fields must be PascalCase
-dotnet_naming_rule.static_readonly_fields_must_be_pascal_case.severity = warning
-dotnet_naming_rule.static_readonly_fields_must_be_pascal_case.symbols = static_readonly_fields
-dotnet_naming_rule.static_readonly_fields_must_be_pascal_case.style = pascal_case
+# Non public Static fields must starts with s_
+dotnet_naming_rule.static_non_public_fields_must_be_prefixed.severity = error
+dotnet_naming_rule.static_non_public_fields_must_be_prefixed.symbols = static_non_public_fields
+dotnet_naming_rule.static_non_public_fields_must_be_prefixed.style = s_underscore_prefix
+
+# Public Static fields must be PascalCase
+dotnet_naming_rule.static_public_fields_must_be_pascal_case.severity = error
+dotnet_naming_rule.static_public_fields_must_be_pascal_case.symbols = static_public_fields
+dotnet_naming_rule.static_public_fields_must_be_pascal_case.style = pascal_case
 
 # Class, struct, enum and delegates must be PascalCase
 dotnet_naming_rule.non_interface_types_must_be_pascal_case.severity = warning
 dotnet_naming_rule.non_interface_types_must_be_pascal_case.symbols = non_interface_types
 dotnet_naming_rule.non_interface_types_must_be_pascal_case.style = pascal_case
 
-# Constant fields must be Upper Case (also forces enums to be upper case)
-# https://stackoverflow.com/questions/45120852/editorconfig-const-enum-settings-not-working-in-visual-studio
-# 
-#dotnet_naming_rule.constant_fields_must_be_upper_case.severity = warning
-#dotnet_naming_rule.constant_fields_must_be_upper_case.symbols = constant_fields
-#dotnet_naming_rule.constant_fields_must_be_upper_case.style = upper_constants
-
-# Public members must be capitalized
+# Public members must be pascal case
 dotnet_naming_rule.public_members_must_be_capitalized.severity = warning
 dotnet_naming_rule.public_members_must_be_capitalized.symbols = class_interface_symbols
-dotnet_naming_rule.public_members_must_be_capitalized.style = first_upper
+dotnet_naming_rule.public_members_must_be_capitalized.style = pascal_case
 
 # Parameters must be camelCase
 dotnet_naming_rule.parameters_must_be_camel_case.severity = warning

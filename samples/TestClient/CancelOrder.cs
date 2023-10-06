@@ -1,3 +1,5 @@
-﻿public class CancelOrder : IMessage
+﻿namespace TestClient;
+
+public class CancelOrder : IMessage
 {
 }
