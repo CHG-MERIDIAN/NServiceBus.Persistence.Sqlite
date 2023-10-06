@@ -21,6 +21,7 @@
 		<ProjectGuid>{05F93302-01C5-4482-B049-7EED9968A54A}</ProjectGuid>
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
 	<ItemGroup>
@@ -38,6 +39,7 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<None Include="icon.png" Pack="true" Visible="false" PackagePath="." />
+		<None Include="icon.png" Pack="true" Visible="false" PackagePath="\" />
+		<None Include="README.md" Pack="true" PackagePath="\"/>
 	</ItemGroup>
 </Project>
