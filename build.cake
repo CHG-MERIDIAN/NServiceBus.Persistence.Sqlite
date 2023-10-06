@@ -5,7 +5,7 @@
 #addin "nuget:?package=Cake.Sonar&version=1.1.32"
 
 var target = Argument("target", "Default");
-var sonarLogin = Argument("sonarLogin", EnvironmentVariable("SONAR_LOGIN") ?? "");
+var sonarLoginToken = Argument("sonarLogin", EnvironmentVariable("SONAR_LOGIN") ?? "");
 var nugetApiKey = Argument("nugetApiKey", EnvironmentVariable("NUGET_API_KEY") ?? "");
 
 //////////////////////////////////////////////////////////////////////
@@ -28,9 +28,12 @@ var testResultsPath = MakeAbsolute(outputDirTests).CombineWithFilePath("*.trx");
 var nugetPublishFeed = "https://api.nuget.org/v3/index.json";
 
 var isLocalBuild = BuildSystem.IsLocalBuild;
-var isMasterBranch = StringComparer.OrdinalIgnoreCase.Equals("refs/heads/main", BuildSystem.GitHubActions.Environment.Workflow.Ref);
+var isMainBranch = StringComparer.OrdinalIgnoreCase.Equals("refs/heads/main", BuildSystem.GitHubActions.Environment.Workflow.Ref);
 var isPullRequest = BuildSystem.GitHubActions.Environment.PullRequest.IsPullRequest;
-var runSonar = !string.IsNullOrWhiteSpace(sonarLogin);
+var runSonar = !string.IsNullOrWhiteSpace(sonarLoginToken);
+
+var gitHubEvent = EnvironmentVariable("GITHUB_EVENT_NAME");
+var isReleaseCreation = string.Equals(gitHubEvent, "release");
 
 //////////////////////////////////////////////////////////////////////
 // TASKS
@@ -39,10 +42,11 @@ var runSonar = !string.IsNullOrWhiteSpace(sonarLogin);
 Setup(context =>
 {
 	Information($"Local build: {isLocalBuild}");
-	Information($"Master branch: {isMasterBranch}");
+	Information($"Main branch: {isMainBranch}");
 	Information($"Pull request: {isPullRequest}");	
 	Information($"Run sonar: {runSonar}");
 	Information($"ref: {BuildSystem.GitHubActions.Environment.Workflow.Ref}");
+	Information($"Is release creation: {isReleaseCreation}");
 });
 
 Task("Clean")
@@ -112,7 +116,7 @@ Task("SonarBegin")
 			Key = sonarProjectKey,
 			Url = sonarUrl,
 			Organization = sonarOrganization,
-			Login = sonarLogin,
+			Token = sonarLoginToken,
 			UseCoreClr = true,
 			VsTestReportsPath = testResultsPath.ToString(),
 			OpenCoverReportsPath = codeCoverageResultFilePath.ToString()
@@ -123,19 +127,26 @@ Task("SonarEnd")
 	.WithCriteria(runSonar)
 	.Does(() => {
 		SonarEnd(new SonarEndSettings {
-			Login = sonarLogin
+			Token = sonarLoginToken
 		});
 	});
 	
 Task("Publish")
-	.WithCriteria(!isPullRequest && isMasterBranch)
+	.WithCriteria(isReleaseCreation)
 	.IsDependentOn("Test")	
 	.IsDependentOn("Version")
 	.Description("Pushes the created NuGet packages to nuget.org")  
-	.Does(() => {
-	
-		// Get the paths to the packages.
-		var packages = GetFiles(outputDirNuget + "*.nupkg");
+	.Does(() => {		
+		Information($"Upload packages from {outputDirNuget.FullPath}");
+
+		// Get the paths to the packages ordered by the file names in order to get the nupkg first.
+		var packages = GetFiles(outputDirNuget.CombineWithFilePath("*.*nupkg").ToString()).OrderBy(x => x.FullPath).ToArray();
+
+		if (packages.Length == 0)
+		{
+			Error("No packages found to upload");
+			return;
+		}
 
 		// Push the package and symbols
 		NuGetPush(packages, new NuGetPushSettings {
