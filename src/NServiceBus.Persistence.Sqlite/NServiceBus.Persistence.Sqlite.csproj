@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
@@ -25,14 +25,14 @@
   </PropertyGroup>
 
 	<ItemGroup>
-		<InternalsVisibleTo Include="NServiceBus.Persistence.Sqlite.Tests"/>
+		<InternalsVisibleTo Include="NServiceBus.Persistence.Sqlite.Tests" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Data.Sqlite" Version="[7.0.0, 8.0.0)" />
-		<PackageReference Include="NServiceBus" Version="[8.0.0, 9.0.0)" />
+		<PackageReference Include="NServiceBus" Version="[9.0.0, 10.0.0)" />
 
-		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
@@ -40,6 +40,6 @@
 
 	<ItemGroup>
 		<None Include="icon.png" Pack="true" Visible="false" PackagePath="\" />
-		<None Include="README.md" Pack="true" PackagePath="\"/>
+		<None Include="README.md" Pack="true" PackagePath="\" />
 	</ItemGroup>
 </Project>
