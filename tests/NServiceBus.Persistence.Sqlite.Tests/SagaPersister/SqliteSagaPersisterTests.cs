@@ -1,5 +1,5 @@
-﻿using FluentAssertions;
-using NServiceBus.Extensibility;
+﻿using NServiceBus.Extensibility;
+using Shouldly;
 
 namespace NServiceBus.Persistence.Sqlite.Tests.SagaPersister;
 
@@ -24,12 +24,12 @@ internal class SqliteSagaPersisterTests : SqlitePersistenceTestBase
 
 			await persister.Save(sagaEntity, this.CreateMetadata<SomeSaga>(sagaEntity), SynchronizedSession, context);
 
-			(await SynchronizedSession.Session.Connection.RecordExists($"SELECT * FROM SagaData WHERE Id='{sagaId.ToString()}'")).Should().BeTrue();
+			(await SynchronizedSession.Session.Connection.RecordExists($"SELECT * FROM SagaData WHERE Id='{sagaId.ToString()}'")).ShouldBeTrue();
 
 			var saga = await persister.Get<SagaData>(sagaId, SynchronizedSession, context);
 			await persister.Complete(saga, SynchronizedSession, context);
 
-			(await SynchronizedSession.Session.Connection.RecordExists($"SELECT * FROM SagaData WHERE Id='{sagaId.ToString()}'")).Should().BeFalse();
+			(await SynchronizedSession.Session.Connection.RecordExists($"SELECT * FROM SagaData WHERE Id='{sagaId.ToString()}'")).ShouldBeFalse();
 		}
 	}
 
@@ -52,7 +52,7 @@ internal class SqliteSagaPersisterTests : SqlitePersistenceTestBase
 
 			await persister.Save(sagaEntity, this.CreateMetadata<SomeSaga>(sagaEntity), SynchronizedSession, context);
 
-			(await SynchronizedSession.Session.Connection.RecordExists($"SELECT * FROM SagaData WHERE Id='{sagaId.ToString()}'")).Should().BeTrue();
+			(await SynchronizedSession.Session.Connection.RecordExists($"SELECT * FROM SagaData WHERE Id='{sagaId.ToString()}'")).ShouldBeTrue();
 		}
 	}
 
@@ -78,7 +78,7 @@ internal class SqliteSagaPersisterTests : SqlitePersistenceTestBase
 			var saga = await persister.Get<SagaData>(sagaId, SynchronizedSession, context);
 			await persister.Update(saga, SynchronizedSession, context);
 
-			(await SynchronizedSession.Session.Connection.GetFirst<int>($"SELECT Concurrency FROM SagaData WHERE Id='{sagaId.ToString()}'")).Should().Be(2);
+			(await SynchronizedSession.Session.Connection.GetFirst<int>($"SELECT Concurrency FROM SagaData WHERE Id='{sagaId.ToString()}'")).ShouldBe(2);
 		}
 	}
 
@@ -102,7 +102,7 @@ internal class SqliteSagaPersisterTests : SqlitePersistenceTestBase
 			await persister.Save(sagaEntity, this.CreateMetadata<SomeSaga>(sagaEntity), SynchronizedSession, context);
 
 			var saga = await persister.Get<SagaData>(sagaId, SynchronizedSession, context);
-			saga.Should().NotBeNull();
+			saga.ShouldNotBeNull();
 		}
 
 		[Test]
@@ -123,7 +123,7 @@ internal class SqliteSagaPersisterTests : SqlitePersistenceTestBase
 			await persister.Save(sagaEntity, this.CreateMetadata<SomeSaga>(sagaEntity), SynchronizedSession, context);
 
 			var saga = await persister.Get<SagaData>("SomeId", sagaEntity.SomeId, SynchronizedSession, context);
-			saga.Should().NotBeNull();
+			saga.ShouldNotBeNull();
 		}
 	}
 
