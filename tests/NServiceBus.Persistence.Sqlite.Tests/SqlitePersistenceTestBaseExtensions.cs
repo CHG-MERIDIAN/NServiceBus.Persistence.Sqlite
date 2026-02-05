@@ -4,11 +4,11 @@ namespace NServiceBus.Persistence.Sqlite.Tests;
 
 internal static class SqlitePersistenceTestBaseExtensions
 {
-	public static SagaCorrelationProperty CreateMetadata<T>(this SqlitePersistenceTestBase test, IContainSagaData sagaEntity)
+	public static SagaCorrelationProperty CreateMetadata<T>(this SqlitePersistenceTestBase test, IContainSagaData sagaEntity) where T : Saga
 	{
 		_ = test;
 
-		var metadata = SagaMetadata.Create(typeof(T));
+		var metadata = SagaMetadata.Create<T>();
 
 		metadata.TryGetCorrelationProperty(out SagaMetadata.CorrelationPropertyMetadata correlationPropertyMetadata);
 

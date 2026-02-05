@@ -7,6 +7,8 @@ var endpointConfiguration = new EndpointConfiguration("Samples.SimpleSaga");
 var persistence = endpointConfiguration.UsePersistence<SqlitePersistence>();
 persistence.UseConnectionString("Data Source=file:SagaStore.db");
 
+
+endpointConfiguration.UseSerialization<SystemJsonSerializer>();
 endpointConfiguration.UseTransport<LearningTransport>();
 
 var endpointInstance = await Endpoint.Start(endpointConfiguration)
