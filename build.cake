@@ -11,7 +11,7 @@ var nugetApiKey = Argument("nugetApiKey", EnvironmentVariable("NUGET_API_KEY") ?
 //////////////////////////////////////////////////////////////////////
 //    Build Variables
 /////////////////////////////////////////////////////////////////////
-var solution = "./NServiceBus.Persistence.Sqlite.sln";
+var solution = "./NServiceBus.Persistence.Sqlite.slnx";
 var project = "./src/NServiceBus.Persistence.Sqlite/NServiceBus.Persistence.Sqlite.csproj";
 var outputDir = MakeAbsolute(Directory("./buildArtifacts/"));
 var outputDirNuget = outputDir.Combine("NuGet");
