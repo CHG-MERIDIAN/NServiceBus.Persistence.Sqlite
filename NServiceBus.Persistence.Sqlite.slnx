@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="samples/TestClient/TestClient.csproj" />
+  <Project Path="src/NServiceBus.Persistence.Sqlite/NServiceBus.Persistence.Sqlite.csproj" />
+  <Project Path="tests/NServiceBus.Persistence.Sqlite.Tests/NServiceBus.Persistence.Sqlite.Tests.csproj" />
+</Solution>

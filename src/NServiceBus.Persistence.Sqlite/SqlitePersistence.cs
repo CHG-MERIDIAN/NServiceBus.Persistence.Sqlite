@@ -1,5 +1,4 @@
-﻿using NServiceBus.Features;
-using NServiceBus.Persistence;
+﻿using NServiceBus.Persistence;
 using NServiceBus.Persistence.Sqlite;
 
 namespace NServiceBus;
@@ -7,12 +6,15 @@ namespace NServiceBus;
 /// <summary>
 /// Used to enable Sqlite persistence.
 /// </summary>
-public class SqlitePersistence : PersistenceDefinition
+public class SqlitePersistence : PersistenceDefinition, IPersistenceDefinitionFactory<SqlitePersistence>
 {
 	internal SqlitePersistence()
 	{
-		Supports<StorageType.Sagas>(s => s.EnableFeatureByDefault<SqliteSagaStorage>());
-		//Supports<StorageType.Subscriptions>(s => s.EnableFeatureByDefault<SqliteSubscriptionPersistence>());
-		//Supports<StorageType.Outbox>(s => s.EnableFeatureByDefault<SqliteOutboxPersistence>());
+		Supports<StorageType.Sagas, SqliteSagaStorage>();
+	}
+
+	public static SqlitePersistence Create()
+	{
+		return new SqlitePersistence();
 	}
 }

@@ -26,6 +26,12 @@ internal sealed class SqliteSynchronizedStorageSession : ICompletableSynchronize
 		}
 	}
 
+	public ValueTask DisposeAsync()
+	{
+		this.Dispose();
+		return ValueTask.CompletedTask;
+	}
+
 	public ValueTask<bool> TryOpen(IOutboxTransaction transaction, ContextBag context, CancellationToken cancellationToken = new CancellationToken())
 	{
 		//if (transaction is NonDurableOutboxTransaction inMemOutboxTransaction)

@@ -6,9 +6,9 @@ namespace NServiceBus.Persistence.Sqlite;
 
 internal class SqliteSagaStorage : Feature
 {
-	internal SqliteSagaStorage()
+	public SqliteSagaStorage()
 	{
-		Defaults(s => s.EnableFeatureByDefault<SqliteStorageSession>());
+		Enable<SqliteStorageSession>();
 
 		DependsOn<NServiceBus.Features.Sagas>();
 		DependsOn<SqliteStorageSession>();
