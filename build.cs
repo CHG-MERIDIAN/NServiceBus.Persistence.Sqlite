@@ -1,8 +1,11 @@
-#tool "dotnet:?package=GitVersion.Tool&version=5.12.0"
-#tool "nuget:?package=NuGet.CommandLine&version=6.7.0"
-#tool "nuget:?package=dotnet-sonarscanner&version=5.14.0"
+#:sdk Cake.Sdk@6.0.0
 
-#addin "nuget:?package=Cake.Sonar&version=1.1.32"
+#:package Cake.Sonar@1.1.32
+
+InstallTools(
+   "dotnet:?package=GitVersion.Tool&version=5.12.0",
+   "dotnet:?package=dotnet-sonarscanner&version=11.0.0"
+);
 
 var target = Argument("target", "Default");
 var sonarLoginToken = Argument("sonarLogin", EnvironmentVariable("SONAR_LOGIN") ?? "");
@@ -12,7 +15,6 @@ var nugetApiKey = Argument("nugetApiKey", EnvironmentVariable("NUGET_API_KEY") ?
 //    Build Variables
 /////////////////////////////////////////////////////////////////////
 var solution = "./NServiceBus.Persistence.Sqlite.slnx";
-var project = "./src/NServiceBus.Persistence.Sqlite/NServiceBus.Persistence.Sqlite.csproj";
 var outputDir = MakeAbsolute(Directory("./buildArtifacts/"));
 var outputDirNuget = outputDir.Combine("NuGet");
 var sonarProjectKey = "CHG-MERIDIAN_NServiceBus.Persistence.Sqlite";
@@ -60,7 +62,7 @@ Task("Clean")
 	CreateDirectory(outputDir);	
 });
 
-GitVersion versionInfo = null;
+GitVersion versionInfo = null!;
 Task("Version")
 	.Description("Retrieves the current version from the git repository")
 	.Does(() => {
@@ -79,17 +81,17 @@ Task("Build")
 		
 		var msBuildSettings = new DotNetMSBuildSettings()
 		{
-			Version =  versionInfo.AssemblySemVer,
-			InformationalVersion = versionInfo.InformationalVersion,
-			PackageVersion = versionInfo.NuGetVersionV2
-		}.WithProperty("PackageOutputPath", outputDirNuget.FullPath);	
+			Version =  versionInfo!.AssemblySemVer,
+			InformationalVersion = versionInfo!.InformationalVersion,
+			PackageVersion = versionInfo!.NuGetVersionV2
+		}.WithProperty("PackageOutputPath", outputDirNuget.FullPath);
 
 		var settings = new DotNetBuildSettings {
-			Configuration = "Release",					
+			Configuration = "Release",
 			MSBuildSettings = msBuildSettings
-		};	
+		};
 
-		DotNetBuild(solution, settings);			
+		DotNetBuild(solution, settings);
 	});
 
 Task("Test")
@@ -136,7 +138,7 @@ Task("Publish")
 	.IsDependentOn("Test")	
 	.IsDependentOn("Version")
 	.Description("Pushes the created NuGet packages to nuget.org")  
-	.Does(() => {		
+	.Does(() => {
 		Information($"Upload packages from {outputDirNuget.FullPath}");
 
 		// Get the paths to the packages ordered by the file names in order to get the nupkg first.
@@ -148,18 +150,21 @@ Task("Publish")
 			return;
 		}
 
-		// Push the package and symbols
-		NuGetPush(packages, new NuGetPushSettings {
-			Source = nugetPublishFeed,
-			ApiKey = nugetApiKey,
-			SkipDuplicate = true
-		});	
+		foreach (var package in packages)
+		{
+			Information($"Found package to upload: {package.FullPath}");
+			DotNetNuGetPush(package, new DotNetNuGetPushSettings {
+				Source = nugetPublishFeed,
+				ApiKey = nugetApiKey,
+				SkipDuplicate = true
+			});
+		}
 	});
-	
+
 Task("Default")
 	.IsDependentOn("SonarBegin")
 	.IsDependentOn("Test")	
 	.IsDependentOn("SonarEnd")
-	.IsDependentOn("Publish");	
+	.IsDependentOn("Publish");
 
 RunTarget(target);

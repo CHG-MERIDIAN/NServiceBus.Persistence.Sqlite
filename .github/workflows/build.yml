@@ -36,13 +36,10 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: |
-          6.0.x
-          7.0.x
+          10.0.x
           
     - name: Run Cake script
-      uses: cake-build/cake-action@v1
-      with:
-        verbosity: Diagnostic
+      run: dotnet build.cs -- --target=Default --verbosity=Diagnostic
       env:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}  
           SONAR_LOGIN: ${{ secrets.SONAR_LOGIN_SQLITEPERSISTENCE }} 
