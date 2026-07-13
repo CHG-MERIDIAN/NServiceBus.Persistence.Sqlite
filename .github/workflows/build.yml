@@ -20,26 +20,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: 17.0.7
-        distribution: microsoft
           
     - name: Get the sources
       uses: actions/checkout@v4
-      
-    - name: Fetch all history for all tags and branches
-      run: git fetch --prune --unshallow
+      with:
+        ref: ${{ github.head_ref }}   # checkout the correct branch name
+        fetch-depth: 0                # fetch the whole repo history
     
     - name: Setup .NET
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: |
           10.0.x
           
     - name: Run Cake script
-      run: dotnet build.cs -- --target=Default --verbosity=Diagnostic
+      run: dotnet run build.cs -- --target=Default --verbosity=Diagnostic
       env:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}  
           SONAR_LOGIN: ${{ secrets.SONAR_LOGIN_SQLITEPERSISTENCE }} 
