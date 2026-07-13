@@ -19,7 +19,7 @@ var outputDir = MakeAbsolute(Directory("./buildArtifacts/"));
 var outputDirNuget = outputDir.Combine("NuGet");
 var sonarProjectKey = "CHG-MERIDIAN_NServiceBus.Persistence.Sqlite";
 var sonarUrl = "https://sonarcloud.io";
-var sonarOrganization = "chg-meridian";
+var sonarOrganization = "chg-meridian-github";
 
 var outputDirTemp = outputDir.Combine("Temp");
 var outputDirTests = outputDirTemp.Combine("Tests");
