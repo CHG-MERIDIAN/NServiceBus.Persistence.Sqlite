@@ -44,7 +44,7 @@ internal sealed class SqliteSynchronizedStorageSession : ICompletableSynchronize
 
 	public ValueTask<bool> TryOpen(TransportTransaction transportTransaction, ContextBag context, CancellationToken cancellationToken = new CancellationToken())
 	{
-		if (transportTransaction.TryGet(out Transaction ambientTransaction))
+		if (transportTransaction.TryGet(out Transaction? _))
 		{
 			//Transaction = new NonDurableTransaction();
 			//ownsTransaction = true;

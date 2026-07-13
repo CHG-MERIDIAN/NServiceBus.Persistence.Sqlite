@@ -144,7 +144,7 @@ internal class SqliteSagaPersister : ISagaPersister
 		//var concurrency = await dataReader.GetFieldValueAsync<int>(2, cancellationToken).ConfigureAwait(false);
 		ReadMetadata(dataReader.GetString(1), out var originator, out var originalMessageId);
 
-		var sagaData = Serializer.Deserialize<TSagaData>(dataReader.GetString(2));
+		var sagaData = Serializer.Deserialize<TSagaData>(dataReader.GetString(2)) ?? throw new InvalidOperationException("Failed to deserialize saga data.");
 		sagaData.Id = id;
 		sagaData.Originator = originator;
 		sagaData.OriginalMessageId = originalMessageId;
@@ -183,7 +183,7 @@ internal class SqliteSagaPersister : ISagaPersister
 
 	static void ReadMetadata(string metaDataString, out string? originator, out string? originalMessageId)
 	{
-		var metadata = Serializer.Deserialize<Dictionary<string, string>>(metaDataString);
+		var metadata = Serializer.Deserialize<Dictionary<string, string>>(metaDataString) ?? throw new InvalidOperationException("Failed to deserialize saga metadata.");
 		metadata.TryGetValue("Originator", out originator);
 		metadata.TryGetValue("OriginalMessageId", out originalMessageId);
 	}
